@@ -1,0 +1,21 @@
+.wrapper {
+	padding: 0 20px;
+}
+td.favicon {
+	width: 40px;
+}
+	td.favicon img {
+		max-width: 40px;
+		height: auto;
+	}
+td.title {}
+	td.title .data {
+		font-weight: bold;
+		display: block;
+	}
+	td.title .domain {
+		font-style: italic;
+		color: #ccc;
+		font-size: 80%;
+		display: block;
+	}
