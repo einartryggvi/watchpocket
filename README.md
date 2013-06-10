@@ -1,3 +1,2 @@
-ossd13
-======
-Version 0.0.2
+#Watchpocket
+Google Chrome extension
