@@ -65,16 +65,23 @@ watchpocket.isLoggedIn = function() {
 	return (localStorage.oAuthAccessToken) ? true : false;
 };
 
-watchpocket.loadBookmarks = function(selector) {
+watchpocket.loadBookmarks = function(selector, query) {
+	var params = {
+		'consumer_key' : watchpocket.consumerKey,
+		'access_token' : localStorage.oAuthAccessToken
+	}
+	var el = $(selector);
+	el.css('opacity', '0.3');
+	if (query) {
+		params['search'] = query;
+	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
-		JSON.stringify({
-			'consumer_key' : watchpocket.consumerKey,
-			'access_token' : localStorage.oAuthAccessToken
-		}),
+		JSON.stringify(params),
 		function (xhr) {
+			$('h3.bookmarksTitle, .bookmarksSearch').show();
 			var response = JSON.parse(xhr.responseText);
-			console.log(response);
+			var html = '';
 			$.each(response.list, function(i, d) {
 				var icon = 'https://getfavicon.appspot.com/' + d.resolved_url;
 				var url = d.resolved_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?((\/[\w/-]+)*\/)([\w\-\.]+[^#?\s]+)(\?([^#]*))?(#(.*))?$/i);
@@ -84,10 +91,11 @@ watchpocket.loadBookmarks = function(selector) {
 				else {
 					url = '';
 				}
-				var html = '<tr data-url="' + d.resolved_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
+				html += '<tr data-url="' + d.resolved_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
 					'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
-				$(selector).append(html);
 			});
+			$('.bookmarksSearch input').focus();
+			el.html(html).css('opacity', '1.0');
 		}
 	);
 };
