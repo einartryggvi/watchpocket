@@ -74,6 +74,10 @@ watchpocket.loadBookmarks = function(selector, query) {
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
+		console.log('Load Bookmarks with search param = ' + query);
+	}
+	else {
+		console.log('Load Bookmarks no search');
 	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
