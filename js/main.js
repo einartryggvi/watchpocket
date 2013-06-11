@@ -74,10 +74,6 @@ watchpocket.loadBookmarks = function(selector, query) {
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
-		console.log('Load Bookmarks with search param = ' + query);
-	}
-	else {
-		console.log('Load Bookmarks no search');
 	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
@@ -87,16 +83,18 @@ watchpocket.loadBookmarks = function(selector, query) {
 			var response = JSON.parse(xhr.responseText);
 			var html = '';
 			$.each(response.list, function(i, d) {
-				var icon = 'https://getfavicon.appspot.com/' + d.resolved_url;
-				var url = d.resolved_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?((\/[\w/-]+)*\/)([\w\-\.]+[^#?\s]+)(\?([^#]*))?(#(.*))?$/i);
-				if (url) {
-					url = url[3];
+				if (d.resolved_url) {
+					var icon = 'https://getfavicon.appspot.com/' + d.resolved_url;
+					var url = d.resolved_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?((\/[\w/-]+)*\/)([\w\-\.]+[^#?\s]+)(\?([^#]*))?(#(.*))?$/i);
+					if (url) {
+						url = url[3];
+					}
+					else {
+						url = '';
+					}
+					html += '<tr data-url="' + d.resolved_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
+						'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
 				}
-				else {
-					url = '';
-				}
-				html += '<tr data-url="' + d.resolved_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
-					'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
 			});
 			$('.bookmarksSearch input').focus();
 			el.html(html).css('opacity', '1.0');
