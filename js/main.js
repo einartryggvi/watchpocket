@@ -83,16 +83,17 @@ watchpocket.loadBookmarks = function(selector, query) {
 			var response = JSON.parse(xhr.responseText);
 			var html = '';
 			$.each(response.list, function(i, d) {
-				if (d.resolved_url) {
-					var icon = 'https://getfavicon.appspot.com/' + d.resolved_url;
-					var url = d.resolved_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?((\/[\w/-]+)*\/)([\w\-\.]+[^#?\s]+)(\?([^#]*))?(#(.*))?$/i);
+				if (d.given_url) {
+					var url = d.given_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i);
+					console.log(url);
+					var icon = 'https://web-image.appspot.com/?url=' + d.given_url;
 					if (url) {
 						url = url[3];
 					}
 					else {
 						url = '';
 					}
-					html += '<tr data-url="' + d.resolved_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
+					html += '<tr data-url="' + d.given_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
 				}
 			});
