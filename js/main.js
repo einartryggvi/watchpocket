@@ -65,15 +65,20 @@ watchpocket.isLoggedIn = function() {
 	return (localStorage.oAuthAccessToken) ? true : false;
 };
 
-watchpocket.loadBookmarks = function(selector, query) {
+watchpocket.loadBookmarks = function(selector, query, sort) {
 	var params = {
-		'consumer_key' : watchpocket.consumerKey,
-		'access_token' : localStorage.oAuthAccessToken
+		consumer_key: watchpocket.consumerKey,
+		access_token: localStorage.oAuthAccessToken,
+		sort: 'title',
+		state: 'unread'
 	}
 	var el = $(selector);
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
+	}
+	if (sort) {
+		params['sort'] = sort;
 	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
@@ -85,7 +90,6 @@ watchpocket.loadBookmarks = function(selector, query) {
 			$.each(response.list, function(i, d) {
 				if (d.given_url) {
 					var url = d.given_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i);
-					console.log(url);
 					var icon = 'https://web-image.appspot.com/?url=' + d.given_url;
 					if (url) {
 						url = url[3];
@@ -93,7 +97,11 @@ watchpocket.loadBookmarks = function(selector, query) {
 					else {
 						url = '';
 					}
-					html += '<tr data-url="' + d.given_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
+					var excerpt = '';
+					if (d.excerpt) {
+						excerpt = 'data-original-title="' + d.excerpt.substr(0, 120) + '..."';
+					}
+					html += '<tr rel="tooltip" data-url="' + d.given_url + '" ' + excerpt + '><td class="favicon"><img src="' + icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
 				}
 			});
@@ -111,4 +119,8 @@ $(function() {
 		});
 		return false;
 	});
+	$('body').tooltip({
+        selector: "[rel=tooltip]",
+        placement: 'top'
+    })
 });
