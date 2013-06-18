@@ -1,5 +1,7 @@
+watchpocket = window.watchpocket || chrome.extension.getBackgroundPage().watchpocket;
+
 $(function() {
-	watchpocket.loadBookmarks('#bookmarks tbody');
+	watchpocket.loadBookmarks($('#bookmarks'));
 	$('#bookmarks').on('click', 'tr', function() {
 		chrome.tabs.create({url: $(this).data('url')});
 	});
@@ -12,6 +14,10 @@ $(function() {
 		}
 	});
 	function search() {
-		watchpocket.loadBookmarks('#bookmarks tbody', $('.bookmarksSearch input').val());
+		watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val());
 	}
+	$('body').tooltip({
+        selector: "[rel=tooltip]",
+        placement: 'top'
+    });
 });
