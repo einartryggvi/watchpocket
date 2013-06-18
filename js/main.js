@@ -65,27 +65,31 @@ watchpocket.isLoggedIn = function() {
 	return (localStorage.oAuthAccessToken) ? true : false;
 };
 
-watchpocket.loadBookmarks = function(selector, query) {
+watchpocket.loadBookmarks = function(el, query, sort) {
 	var params = {
-		'consumer_key' : watchpocket.consumerKey,
-		'access_token' : localStorage.oAuthAccessToken
+		consumer_key: watchpocket.consumerKey,
+		access_token: localStorage.oAuthAccessToken,
+		sort: 'oldest',
+		state: 'unread'
 	}
-	var el = $(selector);
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
+	}
+	if (sort) {
+		params['sort'] = sort;
 	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
 		JSON.stringify(params),
 		function (xhr) {
-			$('h3.bookmarksTitle, .bookmarksSearch').show();
+			$('h3.bookmarksTitle', el).show();
+			$('.bookmarksSearch', el).show();
 			var response = JSON.parse(xhr.responseText);
 			var html = '';
 			$.each(response.list, function(i, d) {
 				if (d.given_url) {
 					var url = d.given_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i);
-					console.log(url);
 					var icon = 'https://web-image.appspot.com/?url=' + d.given_url;
 					if (url) {
 						url = url[3];
@@ -93,22 +97,36 @@ watchpocket.loadBookmarks = function(selector, query) {
 					else {
 						url = '';
 					}
-					html += '<tr data-url="' + d.given_url + '"><td class="favicon"><img src="' + icon + '" /></td>' +
+					var excerpt = '';
+					if (d.excerpt) {
+						excerpt = 'data-original-title="' + d.excerpt.substr(0, 120) + '..."';
+					}
+					html += '<tr rel="tooltip" data-url="' + d.given_url + '" ' + excerpt + '><td class="favicon"><img src="' + icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
 				}
 			});
-			$('.bookmarksSearch input').focus();
-			el.html(html).css('opacity', '1.0');
+			$('.bookmarksSearch input', el).focus();
+			$('tbody', el).html(html);
+			el.css('opacity', '1.0');
 		}
 	);
 };
 
+watchpocket.add = function(url) {
+	var params = {
+		consumer_key: watchpocket.consumerKey,
+		access_token: localStorage.oAuthAccessToken,
+		url: url
+	}
+	watchpocket.post('https://getpocket.com/v3/add', JSON.stringify(params));
+};
+
 $(function() {
-	$('#closeTab').click(function(e) {
-		e.preventDefault();
-		chrome.tabs.getCurrent(function(tab) {
-			chrome.tabs.remove(tab.id);
-		});
-		return false;
+	chrome.contextMenus.create({
+		title: 'Watchpocket',
+		contexts : ['page'],
+		onclick: function(info, tab) {
+			watchpocket.add(tab.url);
+		}
 	});
 });
