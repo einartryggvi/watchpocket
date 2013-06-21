@@ -15,7 +15,11 @@ td.favicon {
 td.title {}
 	td.title .data {
 		font-weight: bold;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 		display: block;
+		width: 330px;
+		overflow: hidden;
 	}
 	td.title .domain {
 		font-style: italic;

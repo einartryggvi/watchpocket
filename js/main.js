@@ -69,7 +69,7 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 	var params = {
 		consumer_key: watchpocket.consumerKey,
 		access_token: localStorage.oAuthAccessToken,
-		sort: 'oldest',
+		sort: 'newest', // Actually doesn't work because a bug in the Pocket API
 		state: 'unread'
 	}
 	el.css('opacity', '0.3');
@@ -85,25 +85,38 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 		function (xhr) {
 			$('h3.bookmarksTitle', el).show();
 			$('.bookmarksSearch', el).show();
-			var response = JSON.parse(xhr.responseText);
-			var html = '';
-			$.each(response.list, function(i, d) {
-				if (d.given_url) {
-					var url = d.given_url.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i);
-					var icon = 'https://web-image.appspot.com/?url=' + d.given_url;
-					if (url) {
-						url = url[3];
-					}
-					else {
-						url = '';
-					}
+			var list = JSON.parse(xhr.responseText).list;
+			var items = [];
+			$.each(list, function(i, d) {
+				// Real URL is preferably the resolved URL but could be the given URL
+				var realURL = d.resolved_url || d.given_url;
+				// If neither resolved or given URL the item isn't worthwhile showing
+				if (realURL) {
+					// Regular expression to parse out the domain name of the URL, or an empty string if something fails
+					var domain = realURL.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i)[3] || '';
+					// Fetches a icon from a great webservice which provides a default fallback icon
+					var icon = 'https://web-image.appspot.com/?url=' + realURL;
+					// Show the shortened excerpt as a tooltip
 					var excerpt = '';
 					if (d.excerpt) {
 						excerpt = 'data-original-title="' + d.excerpt.substr(0, 120) + '..."';
 					}
-					html += '<tr rel="tooltip" data-url="' + d.given_url + '" ' + excerpt + '><td class="favicon"><img src="' + icon + '" /></td>' +
-						'<td class="title"><span class="data">' + d.resolved_title + '</span><span class="domain">' + url + '</span></td></tr>';
+					// Create a data object and push it to the items array
+					items.push({
+						url: realURL,
+						title: d.resolved_title || d.given_title,
+						excerpt: excerpt,
+						icon: icon,
+						domain: domain
+					});
 				}
+			});
+
+			var html = '';
+			// Iterate through the reveresed items array to get newest items at the top
+			$.each(items.reverse(), function(i, d) {
+				html += '<tr rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
+						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span></td></tr>';
 			});
 			$('.bookmarksSearch input', el).focus();
 			$('tbody', el).html(html);
