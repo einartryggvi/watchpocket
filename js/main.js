@@ -69,15 +69,11 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 	var params = {
 		consumer_key: watchpocket.consumerKey,
 		access_token: localStorage.oAuthAccessToken,
-		sort: 'newest', // Actually doesn't work because a bug in the Pocket API
 		state: 'unread'
 	}
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
-	}
-	if (sort) {
-		params['sort'] = sort;
 	}
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
@@ -107,14 +103,61 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 						title: d.resolved_title || d.given_title,
 						excerpt: excerpt,
 						icon: icon,
-						domain: domain
+						domain: domain,
+						added: d.time_added
 					});
 				}
 			});
 
+			var newestSort = function(a, b) {
+				var aTime = parseInt(a.added);
+				var bTime = parseInt(b.added);
+				if (aTime < bTime)
+					return 1;
+				if (aTime > bTime)
+					return -1;
+				return 0;
+			};
+
+			var oldestSort = function(a, b) {
+				var aTime = parseInt(a.added);
+				var bTime = parseInt(b.added);
+				if (aTime < bTime)
+					return -1;
+				if (aTime > bTime)
+					return 1;
+				return 0;
+			};
+
+			var titleSort = function(a, b) {
+				if (a.title < b.title)
+					return -1;
+				if (a.title > b.title)
+					return 1;
+				return 0;
+			};
+
+			var titleReverseSort = function(a, b) {
+				if (a.title < b.title)
+					return -1;
+				if (a.title > b.title)
+					return 1;
+				return 0;
+			};
+
+			if (sort === 'oldest') {
+				items = items.sort(oldestSort);
+			}
+			else if (sort === 'title') {
+				items = items.sort(titleSort);
+			}
+			else {
+				items = items.sort(newestSort);
+			}
+
 			var html = '';
 			// Iterate through the reveresed items array to get newest items at the top
-			$.each(items.reverse(), function(i, d) {
+			$.each(items, function(i, d) {
 				html += '<tr rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span></td></tr>';
 			});
