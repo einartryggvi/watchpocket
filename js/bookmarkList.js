@@ -1,7 +1,13 @@
 watchpocket = window.watchpocket || chrome.extension.getBackgroundPage().watchpocket;
 
+var order = 'newest';
+
+function search() {
+	watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val(), order);
+}
+
 $(function() {
-	watchpocket.loadBookmarks($('#bookmarks'));
+	search();
 	$('#bookmarks').on('click', 'tr', function() {
 		chrome.tabs.create({url: $(this).data('url')});
 	});
@@ -13,9 +19,11 @@ $(function() {
 			search();
 		}
 	});
-	function search() {
-		watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val());
-	}
+    $('.bookmarksSort').on('click', 'button', function(){
+        order = $(this).attr('value');
+        search();
+    });
+
 	$('body').tooltip({
         selector: "[rel=tooltip]",
         placement: 'top'

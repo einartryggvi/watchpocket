@@ -65,7 +65,7 @@ watchpocket.isLoggedIn = function() {
 	return (localStorage.oAuthAccessToken) ? true : false;
 };
 
-watchpocket.loadBookmarks = function(el, query, sort) {
+watchpocket.loadBookmarks = function(el, query, order) {
 	var params = {
 		consumer_key: watchpocket.consumerKey,
 		access_token: localStorage.oAuthAccessToken,
@@ -75,11 +75,15 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 	if (query) {
 		params['search'] = query;
 	}
+    if (order) {
+        params['sort'] = order;
+    }
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
 		JSON.stringify(params),
 		function (xhr) {
 			$('h3.bookmarksTitle', el).show();
+            $('.bookmarksSort', el).show();
 			$('.bookmarksSearch', el).show();
 			var list = JSON.parse(xhr.responseText).list;
 			var items = [];
@@ -145,10 +149,10 @@ watchpocket.loadBookmarks = function(el, query, sort) {
 				return 0;
 			};
 
-			if (sort === 'oldest') {
+			if (params.sort === 'oldest') {
 				items = items.sort(oldestSort);
 			}
-			else if (sort === 'title') {
+			else if (params.sort === 'title') {
 				items = items.sort(titleSort);
 			}
 			else {
