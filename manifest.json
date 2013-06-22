@@ -11,5 +11,11 @@
     "default_icon": "img/icon.png",
     "default_popup": "bookmarksList.html",
     "default_title": "View bookmarks"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/vendor/jquery.min.js", "js/content.js"]
+    }
+  ]
 }

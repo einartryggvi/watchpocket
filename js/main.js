@@ -174,7 +174,9 @@ watchpocket.add = function(url) {
 		access_token: localStorage.oAuthAccessToken,
 		url: url
 	}
-	watchpocket.post('https://getpocket.com/v3/add', JSON.stringify(params));
+	watchpocket.post('https://getpocket.com/v3/add', JSON.stringify(params), function() {
+		 chrome.tabs.executeScript(null, {code:"showBookmarkMessage();"});
+	});
 };
 
 $(function() {
