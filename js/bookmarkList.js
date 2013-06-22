@@ -13,8 +13,12 @@ $(function() {
 			search();
 		}
 	});
+    $('.bookmarksSort').on('click', 'button', function(){
+        watchpocket.order = $(this).attr('value');
+        search();
+    });
 	function search() {
-		watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val());
+		watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val(), watchpocket.order);
 	}
 	$('body').tooltip({
         selector: "[rel=tooltip]",
