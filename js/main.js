@@ -191,4 +191,10 @@ $(function() {
 			watchpocket.add(tab.url);
 		}
 	});
+
+	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		if (request.command === 'addBookmark' && request.url) {
+			watchpocket.add(request.url);
+		}
+	});
 });

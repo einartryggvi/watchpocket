@@ -17,5 +17,9 @@
       "matches": ["http://*/*", "https://*/*"],
       "js": ["js/vendor/jquery.min.js", "js/content.js"]
     }
+  ],
+  "web_accessible_resources": [
+    "img/*",
+    "notification.html"
   ]
 }
