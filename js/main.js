@@ -185,7 +185,7 @@ watchpocket.add = function(url) {
 
 $(function() {
 	chrome.contextMenus.create({
-		title: 'Watchpocket',
+		title: 'Add to Pocket',
 		contexts : ['page'],
 		onclick: function(info, tab) {
 			watchpocket.add(tab.url);
