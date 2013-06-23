@@ -12,10 +12,16 @@ $(function() {
 		'z-index': 12000,
 		'border-radius': '12px 0 0 12px',
 		'box-shadow': '0 0 30px #888',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		opacity: '0.3'
 	});
 	el.click(function() {
 		chrome.runtime.sendMessage({command: "addBookmark", url: window.location.href});
+	});
+	el.hover(function() {
+		$(this).css('opacity', '1');
+	}, function() {
+		$(this).css('opacity', '0.3');
 	});
 	$('body').append(el);
 });
