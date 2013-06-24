@@ -65,18 +65,20 @@ watchpocket.isLoggedIn = function() {
 	return (localStorage.oAuthAccessToken) ? true : false;
 };
 
-watchpocket.loadBookmarks = function(el, query, order) {
+watchpocket.loadBookmarks = function(el, query, sort, state) {
 	var params = {
 		consumer_key: watchpocket.consumerKey,
-		access_token: localStorage.oAuthAccessToken,
-		state: 'unread'
+		access_token: localStorage.oAuthAccessToken
 	}
 	el.css('opacity', '0.3');
 	if (query) {
 		params['search'] = query;
 	}
-    if (order) {
-        params['sort'] = order;
+    if (sort) {
+        params['sort'] = sort;
+    }
+    if (state) {
+        params['state'] = state;
     }
 	watchpocket.post(
 		'https://getpocket.com/v3/get',
@@ -84,6 +86,7 @@ watchpocket.loadBookmarks = function(el, query, order) {
 		function (xhr) {
 			$('h3.bookmarksTitle', el).show();
             $('.bookmarksSort', el).show();
+            $('.bookmarksState', el).show();
 			$('.bookmarksSearch', el).show();
 			var list = JSON.parse(xhr.responseText).list;
 			var items = [];
@@ -160,7 +163,7 @@ watchpocket.loadBookmarks = function(el, query, order) {
 			}
 
 			var html = '';
-			// Iterate through the reveresed items array to get newest items at the top
+			// Iterate through the reversed items array to get newest items at the top
 			$.each(items, function(i, d) {
 				html += '<tr rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span></td></tr>';

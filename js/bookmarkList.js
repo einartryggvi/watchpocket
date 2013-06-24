@@ -1,9 +1,10 @@
 watchpocket = window.watchpocket || chrome.extension.getBackgroundPage().watchpocket;
 
-var order = 'newest';
+var sort = 'newest';
+var state = 'unread';
 
 function search() {
-	watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val(), order);
+	watchpocket.loadBookmarks($('#bookmarks'), $('.bookmarksSearch input').val(), sort, state);
 }
 
 $(function() {
@@ -20,10 +21,13 @@ $(function() {
 		}
 	});
     $('.bookmarksSort').on('click', 'button', function(){
-        order = $(this).attr('value');
+        sort = $(this).attr('value');
         search();
     });
-
+    $('.bookmarksState').on('click', 'button', function(){
+        state = $(this).attr('value');
+        search();
+    });
 	$('body').tooltip({
         selector: "[rel=tooltip]",
         placement: 'top'
