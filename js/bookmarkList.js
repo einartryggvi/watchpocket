@@ -32,7 +32,9 @@ $(function() {
         selector: "[rel=tooltip]",
         placement: 'top'
     });
-	chrome.time.getTime("%d/%m/%Y", function(d) {
-		$("#time").html(d.timeString);
-	});
+	setInterval(function() {
+		chrome.time.getTime("%d/%m/%Y %H:%M", function(d) {
+			$("#time").html(d.timeString);
+		});
+	}, 1000);
 });
