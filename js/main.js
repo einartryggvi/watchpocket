@@ -144,10 +144,10 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 				return 0;
 			};
 
-			var titleReverseSort = function(a, b) {
-				if (a.title < b.title)
+			var siteSort = function(a, b) {
+				if (a.domain < b.domain)
 					return -1;
-				if (a.title > b.title)
+				if (a.domain > b.domain)
 					return 1;
 				return 0;
 			};
@@ -157,6 +157,9 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			}
 			else if (params.sort === 'title') {
 				items = items.sort(titleSort);
+			}
+            else if (params.sort === 'site') {
+				items = items.sort(siteSort);
 			}
 			else {
 				items = items.sort(newestSort);
