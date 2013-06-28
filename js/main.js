@@ -166,7 +166,8 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			// Iterate through the reversed items array to get newest items at the top
 			$.each(items, function(i, d) {
 				html += '<tr rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
-						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span></td></tr>';
+						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span>' +
+					'<span class="actions"><i class="icon-ok"></i><i class="icon-heart"></i><i class="icon-trash"></i></span></td></tr>';
 			});
 			$('.bookmarksSearch input', el).focus();
 			$('tbody', el).html(html);
