@@ -13,15 +13,16 @@ $(function() {
         var $this = $(this);
         var target = $(e.target);
         var id = parseInt($this.attr('id'));
+        var $tooltip = $('.tooltip');
         if (target.hasClass('icon-trash')) {
             watchpocket.send('delete', id);
-			$('#bookmarks .tooltip').remove();
+			$tooltip.remove();
             $this.remove();
         }
         else if (target.hasClass('icon-ok')) {
             watchpocket.send('archive', id);
             if (state === 'unread') {
-				$('#bookmarks .tooltip').remove();
+				$tooltip.remove();
                 $this.remove();
             }
         }
