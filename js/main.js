@@ -90,6 +90,7 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			$('.bookmarksSearch', el).show();
 			var list = JSON.parse(xhr.responseText).list;
 			var items = [];
+			console.log(list);
 			$.each(list, function(i, d) {
 				// Real URL is preferably the resolved URL but could be the given URL
 				var realURL = d.resolved_url || d.given_url;
@@ -115,7 +116,8 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 						icon: icon,
 						domain: domain,
 						added: d.time_added,
-						favorite: (parseInt(d.favorite) === 1)
+						favorite: (parseInt(d.favorite) === 1),
+						status: parseInt(d.status)
 					});
 				}
 			});
@@ -174,7 +176,10 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			$.each(items, function(i, d) {
 				var classes = '';
 				if (d.favorite === true) {
-					classes += 'favorite';
+					classes += 'favorite ';
+				}
+				if (d.status === 1) {
+					classes += 'archived ';
 				}
 				html += '<tr id="' + d.id + '" rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + ' class="'+ classes +'"><td class="favicon"><img src="' + d.icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span>' +

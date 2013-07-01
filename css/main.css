@@ -47,7 +47,7 @@ td.title {
 			margin: 3px 8px;
             opacity: 0.3;
 		}
-        td.title .actions i:hover, tr.favorite td.title .actions i.icon-heart {
+        td.title .actions i:hover, tr.favorite td.title .actions i.icon-heart, tr.archived td.title .actions i.icon-ok {
             opacity: 1;
         }
 

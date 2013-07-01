@@ -13,22 +13,31 @@ $(function() {
         var $this = $(this);
         var target = $(e.target);
         var id = parseInt($this.attr('id'));
-        var $tooltip = $('.tooltip');
+        $('.tooltip').remove();
         if (target.hasClass('icon-trash')) {
             watchpocket.send('delete', id);
-			$tooltip.remove();
             $this.remove();
         }
         else if (target.hasClass('icon-ok')) {
-            watchpocket.send('archive', id);
-            if (state === 'unread') {
-				$tooltip.remove();
-                $this.remove();
-            }
+			if (!$this.hasClass('archived')) {
+				$this.addClass('archived');
+				watchpocket.send('archive', id);
+				if (state === 'unread') {
+					$this.remove();
+				}
+			}
+            else {
+				$this.removeClass('archived');
+				watchpocket.send('readd', id);
+				if (state === 'archive') {
+					$this.remove();
+				}
+			}
         }
         else if (target.hasClass('icon-heart')) {
 			if (!$this.hasClass('favorite')) {
 				watchpocket.send('favorite', id);
+				$this.addClass('favorite');
 			}
 			else {
 				watchpocket.send('unfavorite', id);
