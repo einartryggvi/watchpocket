@@ -15,14 +15,13 @@ $(function() {
         var id = parseInt($this.attr('id'));
         if (target.hasClass('icon-trash')) {
             watchpocket.send('delete', id);
+			$('#bookmarks .tooltip').remove();
             $this.remove();
         }
         else if (target.hasClass('icon-ok')) {
             watchpocket.send('archive', id);
             if (state === 'unread') {
-//                if (target.hasAttribute('data-original-title')) {
-//                   //TODO remove the tooltip;
-//                }
+				$('#bookmarks .tooltip').remove();
                 $this.remove();
             }
         }
