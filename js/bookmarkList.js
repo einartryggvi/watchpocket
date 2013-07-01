@@ -27,7 +27,13 @@ $(function() {
             }
         }
         else if (target.hasClass('icon-heart')) {
-            watchpocket.send('favorite', id);
+			if (!$this.hasClass('favorite')) {
+				watchpocket.send('favorite', id);
+			}
+			else {
+				watchpocket.send('unfavorite', id);
+				$this.removeClass('favorite');
+			}
         }
         else {
             chrome.tabs.create({url: $this.data('url')});

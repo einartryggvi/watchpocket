@@ -114,7 +114,8 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 						excerpt: excerpt,
 						icon: icon,
 						domain: domain,
-						added: d.time_added
+						added: d.time_added,
+						favorite: (parseInt(d.favorite) === 1)
 					});
 				}
 			});
@@ -171,7 +172,11 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			var html = '';
 			// Iterate through the reversed items array to get newest items at the top
 			$.each(items, function(i, d) {
-				html += '<tr id="' + d.id + '" rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
+				var classes = '';
+				if (d.favorite === true) {
+					classes += 'favorite';
+				}
+				html += '<tr id="' + d.id + '" rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + ' class="'+ classes +'"><td class="favicon"><img src="' + d.icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span>' +
 					'<span class="actions"><i class="icon-ok"></i><i class="icon-heart"></i><i class="icon-trash"></i></span></td></tr>';
 			});
