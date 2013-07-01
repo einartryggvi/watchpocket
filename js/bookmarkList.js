@@ -20,11 +20,11 @@ $(function() {
 			search();
 		}
 	});
-    $('.bookmarksSort').on('click', 'button', function(){
+    $('.bookmarksSort button').click(function(){
         sort = $(this).attr('value');
         search();
     });
-    $('.bookmarksState').on('click', 'button', function(){
+    $('.bookmarksState button').click(function(){
         state = $(this).attr('value');
         search();
     });
