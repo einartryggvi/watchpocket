@@ -95,11 +95,12 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 				var realURL = d.resolved_url || d.given_url;
 				// If neither resolved or given URL the item isn't worthwhile showing
 				if (realURL) {
+                    var id = d.item_id;
 					// Regular expression to parse out the domain name of the URL, or an empty string if something fails
 					var domain = realURL.match(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)(:([^\/]*))?/i)[3] || '';
 					// Fetches a icon from a great webservice which provides a default fallback icon
-					//var icon = 'https://web-image.appspot.com/?url=' + realURL;
-                    var icon = 'img/icon.png';
+					var icon = 'https://web-image.appspot.com/?url=' + realURL;
+                    //var icon = 'img/icon.png';
 					// Show the shortened excerpt as a tooltip
 					var excerpt = '';
 					if (d.excerpt) {
@@ -107,6 +108,7 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 					}
 					// Create a data object and push it to the items array
 					items.push({
+                        id: id,
 						url: realURL,
 						title: d.resolved_title || d.given_title,
 						excerpt: excerpt,
@@ -169,7 +171,7 @@ watchpocket.loadBookmarks = function(el, query, sort, state) {
 			var html = '';
 			// Iterate through the reversed items array to get newest items at the top
 			$.each(items, function(i, d) {
-				html += '<tr rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
+				html += '<tr id="' + d.id + '" rel="tooltip" data-url="' + d.url + '" ' + d.excerpt + '><td class="favicon"><img src="' + d.icon + '" /></td>' +
 						'<td class="title"><span class="data">' + d.title + '</span><span class="domain">' + d.domain + '</span>' +
 					'<span class="actions"><i class="icon-ok"></i><i class="icon-heart"></i><i class="icon-trash"></i></span></td></tr>';
 			});
@@ -185,10 +187,19 @@ watchpocket.add = function(url) {
 		consumer_key: watchpocket.consumerKey,
 		access_token: localStorage.oAuthAccessToken,
 		url: url
-	}
+	};
 	watchpocket.post('https://getpocket.com/v3/add', JSON.stringify(params), function() {
 		 chrome.tabs.executeScript(null, {code:"showBookmarkMessage();"});
 	});
+};
+
+watchpocket.send = function(method, id) {
+	var params = {
+		consumer_key: watchpocket.consumerKey,
+		access_token: localStorage.oAuthAccessToken,
+		actions: [{'action': method, 'item_id': id}]
+	};
+	watchpocket.post('https://getpocket.com/v3/send', JSON.stringify(params));
 };
 
 $(function() {

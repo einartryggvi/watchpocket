@@ -9,8 +9,29 @@ function search() {
 
 $(function() {
 	search();
-	$('#bookmarks').on('click', 'tr', function() {
-		chrome.tabs.create({url: $(this).data('url')});
+    $('#bookmarks').on('click', 'tr', function(e) {
+        var $this = $(this);
+        var target = $(e.target);
+        var id = parseInt($this.attr('id'));
+        if (target.hasClass('icon-trash')) {
+            watchpocket.send('delete', id);
+            $this.remove();
+        }
+        else if (target.hasClass('icon-ok')) {
+            watchpocket.send('archive', id);
+            if (state === 'unread') {
+//                if (target.hasAttribute('data-original-title')) {
+//                   //TODO remove the tooltip;
+//                }
+                $this.remove();
+            }
+        }
+        else if (target.hasClass('icon-heart')) {
+            watchpocket.send('favorite', id);
+        }
+        else {
+            chrome.tabs.create({url: $this.data('url')});
+        }
 	});
 	$('.bookmarksSearch button').click(function() {
 		search();
@@ -32,9 +53,11 @@ $(function() {
         selector: "[rel=tooltip]",
         placement: 'top'
     });
-	setInterval(function() {
-		chrome.time.getTime("%d/%m/%Y %H:%M", function(d) {
-			$("#time").html(d.timeString);
-		});
-	}, 1000);
+    if (chrome.time) {
+        setInterval(function() {
+            chrome.time.getTime("%d/%m/%Y %H:%M", function(d) {
+                $("#time").html(d.timeString);
+            });
+        }, 1000);
+    }
 });
