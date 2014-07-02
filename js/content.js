@@ -23,7 +23,7 @@ $(function() {
 	}, function() {
 		$(this).css('opacity', '0.3');
 	});
-	$('body').append(el);
+	//$('body').append(el);
 });
 
 var showBookmarkMessage = function() {
